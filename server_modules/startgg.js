@@ -23,12 +23,7 @@ async function postData(url = "", apiKey = "", data = {}) {
   }
   catch(e) {
     console.log(e);
-  }
-
-  if (response?.ok) {
-
-  } else {
-    console.log(response?.status)
+    return null;
   }
 }
 
