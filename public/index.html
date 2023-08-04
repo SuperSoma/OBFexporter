@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>OBF Exporter</title>
+    <link href="./css/index.css" rel="stylesheet" />
+    <script src="./js/index.js" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <div id="inputContainer">
+      <input type="text" id="bracket" name="bracket" placeholder="Event Link: e.g. https://www.start.gg/tournament/collision-2023-5/event/melee-singles" /> 
+      <button id="submit" onClick="getOBF()">SUBMIT</button>
+    </div>
+    <div id="message"></div>
+    <div id="copy"><button onClick="copy()">COPY</button></div>
+    <pre><code id="codeblock"></code></pre>
+  </body>
+</html>

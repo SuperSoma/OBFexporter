@@ -1,0 +1,42 @@
+html, body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size : 16px;
+}
+
+#inputContainer, #message, #copy {
+  display : flex;
+  margin : 0 auto;
+  justify-content: center;
+  max-width: 800px;
+  width : 100%;
+  gap : 10px;
+  margin-top : 25px;
+}
+
+#copy {
+  justify-content: flex-start;
+}
+
+#message {
+  text-transform: uppercase;
+}
+
+#inputContainer input {
+  border-radius: 8px;
+  height : 30px;
+  font-size : 14px;
+  width : 75%;
+}
+
+#inputContainer button {
+  border-radius: 8px;
+}
+
+pre {
+  margin : 0 auto;
+  max-height : 500px;
+  overflow-x : auto;
+  overflow-y: auto;
+  max-width: 800px;
+  width : 100%;
+}
