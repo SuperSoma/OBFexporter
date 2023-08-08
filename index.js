@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const path = require('path');
 const startgg = require('./server_modules/startgg');
+const challonge = require('./server_modules/challonge');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -14,8 +15,16 @@ app.use(bodyParser.json({limit: '100mb'}));
 app.use('/', express.static(path.join(__dirname, 'public')))
 
 app.post('/obf', async (req, res) => {
-  console.log(req.body.bracket);
-  const obf = await startgg.startGGBracket(req.body.bracket)
+  console.log(req.body.bracket.search('start.gg') != -1);
+  let obf;
+  if (req.body.bracket.search('start.gg') != -1){
+    obf = await startgg.startGGBracket(req.body.bracket);
+
+  } else if (req.body.bracket.search('challonge.com')) {
+    obf = await challonge.getTournamentInfo(req.body.bracket)
+  } else {
+    obf = {}
+  }
   res.json(obf);
 })
 

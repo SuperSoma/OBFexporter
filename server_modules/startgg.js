@@ -223,6 +223,9 @@ const getSets = async (event, pages) => {
 const startGGBracket = async (bracket) => {
   let obf = schema.makeBasicOBF();
 
+  if (!bracket.match(/tournament\/[a-zA-Z0-9_\-]+\/event\/[a-zA-Z0-9_\-]+/))
+    return obf;
+
   const t = bracket.match(/tournament\/[a-zA-Z0-9_\-]+\/event\/[a-zA-Z0-9_\-]+/)[0];
   const info = await getTournamentInfo(t);
 
@@ -243,7 +246,7 @@ const startGGBracket = async (bracket) => {
         "entrantID" : entrants[i]['id'],
         "entrantTag" : entrants[i]['name'],
         "initialSeed" : entrants[i]['initialSeedNum'],
-        "finalPlacement" : entrants[i]['standing']['placement'],
+        "finalPlacement" : entrants[i]['standing'] ? entrants[i]['standing']['placement'] : '',
         "personalInformation" : entrants[i]['participants'].map((p) => {
           return {
             tag : p.gamerTag,
