@@ -56,7 +56,7 @@ const getTournamentInfo = async (event) => {
 
   const sets = eventData.tournament.matches;
   
-  console.log(sets[0]);
+  //console.log(sets[0]);
 
   const statusCheck = (s) => {
     if (s == 'open')
@@ -75,15 +75,43 @@ const getTournamentInfo = async (event) => {
     return wid == pid ? "win" : "lose";
   }
 
-  const scores = (score, player) => {
+  const scores = (score, player, set) => {
     if (!score)
-      return 0;
+      return "n/a";
 
-    return score.split('-')[player]
+    if (player == 0) { //p1
+      return score.match(/[\-]?[0-9]/gi)[0];
+    }
+
+    if (set)
+      console.log(set);
+
+    //need to find more elegant solution to get player 2 score
+    if (player == 1) { //p2
+      
+      if (score.charAt(0) == '-') {
+        const scoreSplit = score.split('-');
+        if (scoreSplit.length == 4) {
+          return '-' + scoreSplit[3];
+        } else {
+          return scoreSplit[2];
+        }
+        
+      } else {
+        const scoreSplit = score.split('-');
+        if (scoreSplit.length == 3) {
+          return '-' + scoreSplit[2];
+        } else {
+          return scoreSplit[1];
+        }
+      }
+    }
+
+    return "theoretically shouldn't get here";
   }
 
   obf.sets = sets.map((s) => schema.makeOBFSet(s.match.id, s.match.player1_id, s.match.player2_id, statusCheck(s.match.state), checkWinner(s.match.winner_id, s.match.player1_id), 
-  checkWinner(s.match.winner_id, s.match.player2_id), scores(s.match.scores_csv, 0), scores(s.match.scores_csv, 1), "", "", []))
+  checkWinner(s.match.winner_id, s.match.player2_id), scores(s.match.scores_csv, 0), scores(s.match.scores_csv, 1, s.match), "", "", []))
   
   
   if (!eventData)
