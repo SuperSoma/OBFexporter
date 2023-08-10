@@ -20,7 +20,7 @@ app.post('/obf', async (req, res) => {
   if (req.body.bracket.search('start.gg') != -1){
     obf = await startgg.startGGBracket(req.body.bracket);
 
-  } else if (req.body.bracket.search('challonge.com')) {
+  } else if (req.body.bracket.search('challonge.com') != -1) {
     obf = await challonge.getTournamentInfo(req.body.bracket)
   } else {
     obf = {}

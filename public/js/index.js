@@ -30,3 +30,13 @@ const getOBF = async () => {
 const copy = () => {
   navigator.clipboard.writeText(obfJSON);
 }
+
+const downloadObjectAsJson = async (exportName) => {
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(obfJSON);
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
