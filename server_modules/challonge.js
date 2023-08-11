@@ -48,11 +48,15 @@ const getTournamentInfo = async (event) => {
 
   const t = eventData.tournament;
 
-  obf.event = schema.makeOBFEvent(t.name, t.started_at, t.game_name, t.participants_count, t.full_challonge_url);
+  const addZero = (num) => num < 10 ? "0"+String(num) : String(num);
+  const d = new Date(t.started_at);
+  const ISO = `${d.getFullYear()}-${addZero(d.getMonth()+1)}-${addZero(d.getDate())}`;
+  obf.event = schema.makeOBFEvent(t.name, ISO, t.game_name, t.participants_count, t.full_challonge_url);
 
   const participants = eventData.tournament.participants;
 
   obf.entrants = participants.map( p => schema.makeOBFEntrant(p.participant.id, p.participant.name, p.participant.seed, p.participant.final_rank));
+  obf.entrants = obf.entrants.filter((e) => e.finalPlacement ? true : false);
 
   const sets = eventData.tournament.matches;
   
@@ -77,7 +81,7 @@ const getTournamentInfo = async (event) => {
 
   const scores = (score, player, set) => {
     if (!score)
-      return "n/a";
+      return 0;
 
     if (player == 0) { //p1
       return score.match(/[\-]?[0-9]/gi)[0];

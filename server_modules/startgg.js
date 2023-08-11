@@ -57,6 +57,11 @@ const getTournamentInfo = async (event) => {
           totalPages
         }
       }
+      phases {
+        id
+        name
+        bracketType
+      }
     }
   }
 `;
@@ -171,6 +176,10 @@ const getSets = async (event, pages) => {
             fullRoundText
             games {
               winnerId
+              orderNum
+              stage {
+                name
+              }
             }
             phaseGroup {
               id
@@ -229,30 +238,39 @@ const startGGBracket = async (bracket) => {
   const t = bracket.match(/tournament\/[a-zA-Z0-9_\-]+\/event\/[a-zA-Z0-9_\-]+/)[0];
   const info = await getTournamentInfo(t);
 
-
+  const addZero = (num) => num < 10 ? "0"+String(num) : String(num);
   if (info) {
+    const d = new Date(info.startAt * 1000);
     obf.event.name = info.tournament.name;
-    obf.event.date = (new Date(info.startAt * 1000)).toISOString();
+    obf.event.date = `${d.getFullYear()}-${addZero(d.getMonth()+1)}-${addZero(d.getDate())}`;
     obf.event.gameName = info.videogame.name;
-    obf.event.numberEntrants = info.numEntrants;
+    obf.event.numberEntrants = parseInt(info.numEntrants);
     obf.event.originURL = "https://start.gg/" + info.slug;
+    obf.event.phases = info.phases.map((phase) => {
+      return {
+        "phaseID" : phase.name,
+        "phaseStructure" : phase.bracketType
+      }
+    })
   }
   const entrants = await getEntrants(t, info.entrants.pageInfo.totalPages);
+
+  
   
   if (entrants) {
     for (let i=0; i < entrants.length; i++) {
       
       obf.entrants.push({
-        "entrantID" : entrants[i]['id'],
+        "entrantID" : String(entrants[i]['id']),
         "entrantTag" : entrants[i]['name'],
-        "initialSeed" : entrants[i]['initialSeedNum'],
-        "finalPlacement" : entrants[i]['standing'] ? entrants[i]['standing']['placement'] : '',
+        "initialSeed" : parseInt(entrants[i]['initialSeedNum']),
+        "finalPlacement" : entrants[i]['standing'] ? parseInt(entrants[i]['standing']['placement']) : 0,
         "personalInformation" : entrants[i]['participants'].map((p) => {
           return {
             tag : p.gamerTag,
-            prefix : p.prefix,
-            name : p.user ? p.user.name : "",
-            location : p.user ? (p.user.location ? p.user.location.country : "") : ""
+            prefix : p.prefix ? p.prefix : "",
+            name : p.user ? (p.user.name ? p.user.name : "") : "",
+            country : p.user ? (p.user.location ? (p.user.location.country ? p.user.location.country : "") : "") : ""
           }
         })
       })
@@ -264,8 +282,8 @@ const startGGBracket = async (bracket) => {
   const getScore = (displayScore) => {
     if (!displayScore || displayScore == 'DQ'){
       return {
-        s1 : null,
-        s2 : null
+        s1 : 0,
+        s2 : 0
       }
     }
 
@@ -290,20 +308,21 @@ const startGGBracket = async (bracket) => {
           return {
             "entrant1Result" : g.winnerId == sets[i]["slots"][0]['entrant']['id'] ? 'win' : 'lose',
             "entrant2Result" : g.winnerId == sets[i]["slots"][1]['entrant']['id'] ? 'win' : 'lose',
-            "stage" : g.stage ? g.stage.name : ''
+            "stage" : g.stage ? g.stage.name : '',
+            "gameNumber" : g.orderNum
           }
         })
       }
 
       obf.sets.push({
-        "setID" : sets[i]['id'],
-        "entrant1ID" : sets[i]["slots"][0]['entrant']['id'],
-        "entrant2ID" : sets[i]["slots"][1]['entrant']['id'],
+        "setID" : String(sets[i]['id']),
+        "entrant1ID" : String(sets[i]["slots"][0]['entrant']['id']),
+        "entrant2ID" : String(sets[i]["slots"][1]['entrant']['id']),
         "status" : sets[i]['state'] == 1 ? 'pending' : (sets[i]['state'] == 2 ? 'started' : 'completed'),
         "entrant1Result" : sets[i]['winnerId'] ? (sets[i]['winnerId'] == sets[i]["slots"][0]['entrant']['id'] ? 'win' : (sets[i].displayScore =='DQ' ? 'dq' : 'lose')) : '',
         "entrant2Result" : sets[i]['winnerId'] ? (sets[i]['winnerId'] == sets[i]["slots"][1]['entrant']['id'] ? 'win' : (sets[i].displayScore =='DQ' ? 'dq' : 'lose')) : '',
-        "entrant1Score" : score.s1,
-        "entrant2Score" : score.s2,
+        "entrant1Score" : parseInt(score.s1),
+        "entrant2Score" : parseInt(score.s2),
         "setFormat" : "bestOf"+sets[i]['totalGames'],
         "phaseID" : sets[i]['phaseGroup']['phase']['name'],
         "games" : games
