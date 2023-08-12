@@ -7,3 +7,5 @@ For use with completed Challonge and Start.GG brackets
 Exports at OBF v1.0
 
 [Link to OBF Repo](https://github.com/openbracketformat/openbracketformat)
+
+[Link to OBF Exporter site](https://obfexporter.njssbm.com/)
