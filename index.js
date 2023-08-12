@@ -18,12 +18,27 @@ app.post('/obf', async (req, res) => {
   console.log(req.body.bracket.search('start.gg') != -1);
   let obf;
   if (req.body.bracket.search('start.gg') != -1){
-    obf = await startgg.startGGBracket(req.body.bracket);
-
+    try {
+      obf = await startgg.startGGBracket(req.body.bracket);
+    }
+    catch(e) {
+      obf = {
+        error : "ERROR WITH BRACKET"
+      }
+    }
   } else if (req.body.bracket.search('challonge.com') != -1) {
-    obf = await challonge.getTournamentInfo(req.body.bracket)
+    try {
+      obf = await challonge.getTournamentInfo(req.body.bracket)
+    }
+    catch(e) {
+      obf = {
+        error : "ERROR WITH BRACKET"
+      }
+    }
   } else {
-    obf = {}
+    obf = {
+      error : "UNSUPPORTED SITE"
+    }
   }
   res.json(obf);
 })

@@ -87,8 +87,8 @@ const getTournamentInfo = async (event) => {
       return score.match(/[\-]?[0-9]/gi)[0];
     }
 
-    if (set)
-      console.log(set);
+    //if (set)
+      //console.log(set);
 
     //need to find more elegant solution to get player 2 score
     if (player == 1) { //p2
@@ -114,8 +114,58 @@ const getTournamentInfo = async (event) => {
     return "theoretically shouldn't get here";
   }
 
-  obf.sets = sets.map((s) => schema.makeOBFSet(s.match.id, s.match.player1_id, s.match.player2_id, statusCheck(s.match.state), checkWinner(s.match.winner_id, s.match.player1_id), 
-  checkWinner(s.match.winner_id, s.match.player2_id), scores(s.match.scores_csv, 0), scores(s.match.scores_csv, 1, s.match), "", "", []))
+  obf.sets = sets.map((s) => {
+    let base = schema.makeOBFSet(s.match.id, s.match.player1_id, s.match.player2_id, statusCheck(s.match.state), checkWinner(s.match.winner_id, s.match.player1_id), 
+    checkWinner(s.match.winner_id, s.match.player2_id), scores(s.match.scores_csv, 0), scores(s.match.scores_csv, 1, s.match), "", "", [])
+    if (s.match.player1_prereq_match_id) {
+      base.entrant1PrevSetID = s.match.player1_prereq_match_id;
+    }
+
+    if (s.match.player2_prereq_match_id) {
+      base.entrant2PrevSetID = s.match.player2_prereq_match_id;
+    }
+
+    //console.log(s);
+
+    return base;
+  })
+
+  for (let i=0; i < obf.sets.length; i++) {
+    let s = obf.sets[i];
+    //let nextSet = obf.sets.findIndex((v) => v.setID == s.entrant1PrevSetID);
+    if (!s.entrant1PrevSetID) {
+      delete s.entrant1PrevSetID;
+    } else {
+      let nextSet = obf.sets.findIndex((v) => v.setID == s.entrant1PrevSetID);
+      //console.log(nextSet);
+
+      if (nextSet != -1) {
+        const e1id = s.entrant1ID;
+
+        if (e1id == obf.sets[nextSet].entrant1ID) {
+          obf.sets[nextSet].entrant1NextSetID = s.setID;
+        } else {
+          obf.sets[nextSet].entrant2NextSetID = s.setID;
+        }
+      }
+    }
+
+    if (!s.entrant2PrevSetID) {
+      delete s.entrant2PrevSetID;
+    } else {
+      let nextSet = obf.sets.findIndex((v) => v.setID == s.entrant2PrevSetID);
+      if (nextSet != -1) {
+        const e1id = s.entrant2ID;
+        //console.log(s.entrant2PrevSetID, obf.sets[nextSet].setID);
+
+        if (e1id == obf.sets[nextSet].entrant1ID) {
+          obf.sets[nextSet].entrant1NextSetID = s.setID;
+        } else {
+          obf.sets[nextSet].entrant2NextSetID = s.setID;
+        }
+      }
+    }
+  }
   
   
   if (!eventData)

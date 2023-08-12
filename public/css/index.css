@@ -13,6 +13,17 @@ html, body {
   margin-top : 25px;
 }
 
+#howToUse, #about {
+  margin : 0 auto;
+  max-width: 800px;
+  width : 100%;
+  margin-top : 25px;
+}
+
+#about {
+  text-align: center;
+}
+
 #copy {
   justify-content: flex-start;
 }
@@ -39,4 +50,5 @@ pre {
   overflow-y: auto;
   max-width: 800px;
   width : 100%;
+  margin-top : 20px;
 }
