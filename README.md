@@ -4,4 +4,4 @@ To use, set up your .env using the envExample, run `npm i` to install all requir
 
 For use with completed Challonge and Start.GG brackets
 
-[Link to Repo](https://github.com/SuperSoma/OBFexporter)
+[Link to OBF Repo](https://github.com/openbracketformat/openbracketformat)
