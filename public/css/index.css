@@ -13,14 +13,14 @@ html, body {
   margin-top : 25px;
 }
 
-#howToUse, #about {
+#howToUse, #about, #header {
   margin : 0 auto;
   max-width: 800px;
   width : 100%;
   margin-top : 25px;
 }
 
-#about {
+#about, #header {
   text-align: center;
 }
 

@@ -19,7 +19,7 @@ app.post('/obf', async (req, res) => {
   let obf;
   if (req.body.bracket.search('start.gg') != -1){
     try {
-      obf = await startgg.startGGBracket(req.body.bracket);
+      obf = await startgg.startGGBracket(req.body.bracket.trim());
     }
     catch(e) {
       obf = {
@@ -28,7 +28,7 @@ app.post('/obf', async (req, res) => {
     }
   } else if (req.body.bracket.search('challonge.com') != -1) {
     try {
-      obf = await challonge.getTournamentInfo(req.body.bracket)
+      obf = await challonge.getTournamentInfo(req.body.bracket.trim())
     }
     catch(e) {
       obf = {
