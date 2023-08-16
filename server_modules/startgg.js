@@ -435,7 +435,7 @@ const getTournamentInfo = async (event) => {
           totalPages
         }
       }
-      sets(perPage:50) {
+      sets(perPage:25) {
         pageInfo {
           total
           totalPages
@@ -544,7 +544,7 @@ const getSets = async (event, pages) => {
     const query = `
     query getSets($slug: String, $i: Int) {
       event(slug: $slug) {
-        sets(page: $i, perPage:50) {
+        sets(page: $i, perPage:25) {
           pageInfo {
             total
             totalPages
